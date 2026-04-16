@@ -21,14 +21,12 @@ public class PocketBank {
             int index = rand.nextInt(merchants.length);
 
             String merchant = merchants[index];
-            String category = categories[index]; // SAME INDEX → mapping
+            String category = categories[index];
 
             double amount = (rand.nextInt(50000) + 100) / 100.0;
 
-            int day = rand.nextInt(30) + 1;
-            String date = "2026-04-" + (day < 10 ? "0" + day : day);
 
-            transactions.add(new Transaction(baseID, merchant, amount, category, date));
+            transactions.add(new Transaction(baseID, merchant, amount, category));
         }
 
         sortedByID = false;
@@ -46,17 +44,30 @@ public class PocketBank {
         }
     }
 
-    static void selectionSortAmount() {
-        for (int i = 0; i < transactions.size(); i++) {
-            int minIndex = i;
 
-            for (int j = i + 1; j < transactions.size(); j++) {
-                if (transactions.get(j).amount < transactions.get(minIndex).amount) {
-                    minIndex = j;
+
+    static void selectionSortAmount() {
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions available.");
+            return;
+        }
+
+        int i, j, min;
+        Transaction temp;
+
+        for (i = 0; i < transactions.size(); i++) {
+            min = i;
+
+            for (j = i + 1; j < transactions.size(); j++) {
+                if (transactions.get(min).amount > transactions.get(j).amount) {
+                    min = j;
                 }
             }
 
-            Collections.swap(transactions, i, minIndex);
+            // swap with the next minimum
+            temp = transactions.get(i);
+            transactions.set(i, transactions.get(min));
+            transactions.set(min, temp);
         }
 
         sortedByID = false;
@@ -64,31 +75,37 @@ public class PocketBank {
     }
 
     static void insertionSortID() {
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions available.");
+            return;
+        }
         for (int i = 1; i < transactions.size(); i++) {
             Transaction key = transactions.get(i);
-            int j = i - 1;
+            int j = i ;
 
-            while (j >= 0 && transactions.get(j).id > key.id) {
-                transactions.set(j + 1, transactions.get(j));
+            while (j > 0 && transactions.get(j-1).id > key.id) {
+                transactions.set(j, transactions.get(j-1));
                 j--;
             }
 
-            transactions.set(j + 1, key);
+            transactions.set(j , key);
         }
 
         sortedByID = true;
         System.out.println("Sorted by ID.");
     }
 
-    static int binarySearch(int target) {
-        int left = 0, right = transactions.size() - 1;
+    static int binarySearch(int key) {
+
+        int left = 0;
+        int right = transactions.size() - 1;
 
         while (left <= right) {
             int mid = (left + right) / 2;
 
-            if (transactions.get(mid).id == target)
+            if (transactions.get(mid).id == key)
                 return mid;
-            else if (transactions.get(mid).id < target)
+            else if (transactions.get(mid).id < key)
                 left = mid + 1;
             else
                 right = mid - 1;
@@ -97,7 +114,12 @@ public class PocketBank {
         return -1;
     }
 
-    static void filterByCategory(String category) {
+    static void filterByCategory(String category)
+    {
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions available.");
+            return;
+        }
         boolean found = false;
 
         for (Transaction t : transactions) {
@@ -141,8 +163,12 @@ public class PocketBank {
                     break;
 
                 case 4:
+                    if (transactions.isEmpty()) {
+                        System.out.println("No transactions available.");
+                        break;
+                    }
                     if (!sortedByID) {
-                        System.out.println("⚠️ Sort by ID first!");
+                        System.out.println(" Sort by ID first!");
                         break;
                     }
 
@@ -177,5 +203,7 @@ public class PocketBank {
                     System.out.println("Invalid choice.");
             }
         }
+    }
+}
     }
 }
