@@ -3,18 +3,21 @@ public class Transaction {
     String merchant;
     double amount;
     String category;
-    String date;
 
-    public Transaction(int id, String merchant, double amount, String category, String date) {
+
+    public Transaction(int id, String merchant, double amount, String category) {
         this.id = id;
         this.merchant = merchant;
         this.amount = amount;
         this.category = category;
-        this.date = date;
+
     }
 
+
     public String toString() {
-        return "ID: " + id + " | " + merchant + " | $" + String.format("%.2f", amount)
-                + " | " + category + " | " + date;
+        return String.format(
+                "ID: %-8d | Merchant: %-15s | Amount: $%8.2f | Category: %-15s",
+                id, merchant, amount, category
+        );
     }
 }
